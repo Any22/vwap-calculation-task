@@ -11,14 +11,15 @@ import com.demo.vwap_calculator.entity.PriceDataEntity;
 import com.demo.vwap_calculator.repository.PriceDataRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class VwapService {
 	
-	private PriceDataRepository priceDataRepository ;
+	private final PriceDataRepository priceDataRepository ;
 	
 	public PriceDataResponse getPriceData() {
 		log.info("Getting all Data from repository...!");
