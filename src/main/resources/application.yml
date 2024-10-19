@@ -1,0 +1,18 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: vwap-calculator
+  datasource:
+    host: localhost
+    port: 5432
+    dbname: price-data
+    url: jdbc:postgresql://${spring.datasource.host}:${spring.datasource.port}/${spring.datasource.dbname}
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update 
