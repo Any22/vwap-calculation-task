@@ -1,8 +1,5 @@
 package com.demo.vwap_calculator.dto;
 
-import java.util.List;
-
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;

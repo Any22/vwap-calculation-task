@@ -1,7 +1,6 @@
 package com.demo.vwap_calculator.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,30 +25,28 @@ public class VwapService {
 	public List<PriceData> getPriceData() {
 		
 		log.info("Getting all Data from repository...!");
-		List<PriceDataEntity> priceDataEntityList= priceDataRepository.findAll();
-		log.info("The PriceDTO is {}"+priceDataEntityList);
-		List<PriceData> priceDataDto = this.maptoDTO(priceDataEntityList);
 		
-		return priceDataDto;
+		List<PriceDataEntity> priceDataEntityList= priceDataRepository.findAll();
+		log.info("The PriceDTO is {}"+ priceDataEntityList);
+			
+		List<PriceData> PriceDTOList = priceDataEntityList.stream()
+				                .map(priceEntity->this.maptoDTO(priceEntity))
+				                .collect(Collectors.toList()); 
+		
+		return PriceDTOList;
 	
-
 	}
 
-	private List<PriceData> maptoDTO(List<PriceDataEntity> priceDataEntityList) {
-		List<PriceData> priceDataDTO = new ArrayList<>();
-		priceDataEntityList.stream()
-		                   .forEach(entity-> 
-		                                    priceDataDTO.add(new PriceData( entity.getEntryNumber(),
-		                                            		                entity.getTimeStamp(), 
-		                                            		                entity.getCurrencyPair(),
-		                                            		                entity.getPrice(), 
-		                                            		                entity.getVolume()
-		                                            		               )
-				                                             )
-		                            );
-	
+	private PriceData maptoDTO(PriceDataEntity pd) {
 		
-		return priceDataDTO;
+	return PriceData.builder()
+			.entryNumber(pd.getEntryNumber())
+			.timeStamp(pd.getTimeStamp())
+			.currencyPair(pd.getCurrencyPair())
+			.price(pd.getPrice())
+			.volume(pd.getVolume())
+			.build();
+				
 	}
 
 	public List<PriceDataResponse> calculateHourlyVwap(List<PriceData> priceData) {

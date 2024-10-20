@@ -22,12 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/vwap")
 public class VwapController {
 	
 	private final VwapService vwapService;
 	
-	@GetMapping(produces= APPLICATION_JSON_VALUE, value = "v1/get-data")
+	@GetMapping(produces= APPLICATION_JSON_VALUE, value = "/get-data")
     public ResponseEntity<List> getExistingData() {     
 		
 		try {

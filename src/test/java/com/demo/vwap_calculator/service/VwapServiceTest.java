@@ -7,17 +7,14 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 
 import com.demo.vwap_calculator.dto.PriceData;
-import com.demo.vwap_calculator.dto.PriceDataResponse;
 import com.demo.vwap_calculator.entity.PriceDataEntity;
 import com.demo.vwap_calculator.repository.PriceDataRepository;
 
