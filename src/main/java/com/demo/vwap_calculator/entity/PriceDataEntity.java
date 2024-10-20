@@ -28,7 +28,7 @@ public class PriceDataEntity {
 	  private Integer entryNumber;
 	 
 	 @Column(name = "time_stamp", nullable = false)
-	  private LocalTime timeStamp;
+	  private String timeStamp;
 	 
 	 @Column(name = "currency_pair", nullable = false)
       private String currencyPair;
