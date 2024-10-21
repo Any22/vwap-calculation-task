@@ -29,7 +29,7 @@ public class PriceDataTest {
 	 
 	 @Test
 	 @DisplayName("Test Should pass if the field values contain the correct values accroding to their data type and every filed must have some value")
-	 void shouldGetTheCorrectValues_PriceData() {
+	 void getPriceDataValue_returnCorrectDataType() {
 		 
 		 assertNotNull(priceData.getCurrencyPair());
 		 assertNotNull(priceData.getTimeStamp());
@@ -42,8 +42,8 @@ public class PriceDataTest {
 	}
 	 
 	 @Test
-	    @DisplayName("Test with zero price")
-	    void shouldGetTheCorrectValues_PriceData_ZeroPrice() {
+	    @DisplayName("Test with zero price valuee")
+	    void gettingPriceData_correctValue_notZero() {
 	        assertFalse(priceData.getPrice() == 0, "price should not be zero");
 	    }
 	 
@@ -53,4 +53,5 @@ public class PriceDataTest {
 	       
 	        assertFalse(priceData.getCurrencyPair().equals("ADE/092"), "Currency pair should be a string only");
 	    }
+	 
 }

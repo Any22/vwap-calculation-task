@@ -1,16 +1,9 @@
 package com.demo.vwap_calculator.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
-
-import java.util.ArrayList;
-import java.util.List;
+import com.demo.vwap_calculator.dto.PriceData;
+import com.demo.vwap_calculator.dto.PriceDataResponse;
+import com.demo.vwap_calculator.service.VwapService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,13 +11,24 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.demo.vwap_calculator.dto.PriceData;
-import com.demo.vwap_calculator.dto.PriceDataResponse;
-import com.demo.vwap_calculator.service.VwapService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(VwapController.class)
 public class VwapControllerTest {
@@ -38,11 +42,9 @@ public class VwapControllerTest {
 	@InjectMocks
 	private VwapController vwapController;
 	  
-	private PriceData priceData1;
-	
-//	private PriceDataResponse priceDataResponse;
-	
+	private PriceData priceData1;	
 	List<PriceData> priceDataList = new ArrayList<>();
+	List<PriceDataResponse> mockPriceDataResponse = new ArrayList<>();
 	
 	 @BeforeEach
 	  void setUp() {
@@ -55,12 +57,16 @@ public class VwapControllerTest {
 			     .build();
 	 
 		 priceDataList.add(priceData1);
+		 
 
   
 	 }
 	 
-	 @Test
-     void toTestForGettingPriceDataOrNot() throws Exception {
+
+
+	
+	@Test
+     void testingForGetting_priceDataOrNot() throws Exception {
   	   
 		
 		    List<PriceDataResponse> mockPriceDataResponse = new ArrayList<>();
@@ -70,7 +76,6 @@ public class VwapControllerTest {
 		    		.hourlyData(5)
 		    		.vwap(0.342)
 		    		.build());
-//		    mockPriceDataResponse.add(PriceDataResponse.builder.("AUD/USD",5,0.342));
 
 		    when(vwapService.getPriceData()).thenReturn(priceDataList);
 		    when(vwapService.calculateHourlyVwap(priceDataList)).thenReturn(mockPriceDataResponse);
