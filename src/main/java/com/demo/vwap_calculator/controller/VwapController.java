@@ -22,29 +22,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class VwapController {
-	
+
 	private final VwapService vwapService;
-	
-	@GetMapping(produces= APPLICATION_JSON_VALUE, value = "/get-data")
-    public ResponseEntity<List> getExistingData() throws Exception {     
-		
+
+	@GetMapping(produces = APPLICATION_JSON_VALUE, value = "/get-data")
+	public ResponseEntity<List> getExistingData() throws Exception {
+
 		try {
-            	List<PriceData> priceDataDTOList = vwapService.getPriceData();
-            	if (priceDataDTOList.isEmpty() || null == priceDataDTOList) {
-		        	
-		        	throw new NoDataFoundException("No price Data found in database");
-		            
-		          } 
-            	
-            	List<PriceDataResponse> priceDataResposne = vwapService.calculateHourlyVwap(priceDataDTOList);
-                return new ResponseEntity<List>(priceDataResposne, HttpStatus.OK);
+			List<PriceData> priceDataDTOList = vwapService.getPriceData();
+			if (priceDataDTOList.isEmpty() || null == priceDataDTOList) {
+
+				throw new NoDataFoundException("No price Data found in database");
+
+			}
+
+			List<PriceDataResponse> priceDataResposne = vwapService.calculateHourlyVwap(priceDataDTOList);
+			return new ResponseEntity<List>(priceDataResposne, HttpStatus.OK);
 		} catch (Exception ex) {
-			   log.error(ex.getMessage());
-	    	   throw ex;
-		  }  
-      
-    }
-	
+			log.error(ex.getMessage());
+			throw ex;
+		}
+
+	}
 
 }
-

@@ -19,17 +19,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceData {
-	  private Integer entryNumber;
-	  private String timeStamp;
-      private String currencyPair;
-      private double price;
-      private int volume;
-      
-      public int getHour() {
-          // Using a formatter with locale to parse AM/PM and 12-hour clock
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
-          LocalTime time = LocalTime.parse(this.timeStamp, formatter);
-          return time.getHour();
-      }
+	private Integer entryNumber;
+	private String timeStamp;
+	private String currencyPair;
+	private double price;
+	private int volume;
+
+	public int getHour() {
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
+		LocalTime time = LocalTime.parse(this.timeStamp, formatter);
+		return time.getHour();
+	}
 
 }

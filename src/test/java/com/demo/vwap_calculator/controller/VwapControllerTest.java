@@ -29,79 +29,61 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(VwapController.class)
 public class VwapControllerTest {
-	
-	@Autowired 
+
+	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@MockBean
 	private VwapService vwapService;
 
 	@InjectMocks
 	private VwapController vwapController;
-	  
-	private PriceData priceData1;	
+
+	private PriceData priceData1;
 	List<PriceData> priceDataList = new ArrayList<>();
 	List<PriceDataResponse> mockPriceDataResponse = new ArrayList<>();
-	
-	 @BeforeEach
-	  void setUp() {
-		 priceData1  = PriceData.builder()
-			     .entryNumber(1)
-			     .currencyPair("AUD/USD")
-			     .timeStamp("05:03 AM")
-			     .price(0.342)
-			     .volume(3454)
-			     .build();
-	 
-		 priceDataList.add(priceData1);
-		 
 
-  
-	 }
-	 
+	@BeforeEach
+	void setUp() {
+		priceData1 = PriceData.builder().entryNumber(1).currencyPair("AUD/USD").timeStamp("05:03 AM").price(0.342)
+				.volume(3454).build();
 
+		priceDataList.add(priceData1);
 
-	
+	}
+
 	@Test
-     void testingForGetting_priceDataOrNot() throws Exception {
-  	   
-		
-		    List<PriceDataResponse> mockPriceDataResponse = new ArrayList<>();
-		    // Add mock response data to the list
-		    mockPriceDataResponse.add( PriceDataResponse.builder()
-		    		.uniqueCurrencyPair("AUD/USD")
-		    		.hourlyData(5)
-		    		.vwap(0.342)
-		    		.build());
+	void testingForGetting_priceDataOrNot() throws Exception {
 
-		    when(vwapService.getPriceData()).thenReturn(priceDataList);
-		    when(vwapService.calculateHourlyVwap(priceDataList)).thenReturn(mockPriceDataResponse);
+		List<PriceDataResponse> mockPriceDataResponse = new ArrayList<>();
+		// Add mock response data to the list
+		mockPriceDataResponse
+				.add(PriceDataResponse.builder().uniqueCurrencyPair("AUD/USD").hourlyData(5).vwap(0.342).build());
 
-		    mockMvc.perform(get("/get-data")
-		              .accept(MediaType.APPLICATION_JSON))
-		              .andExpect(status().isOk())
-		              .andExpect(content().json(asJsonString(mockPriceDataResponse)));  // Check against expected response
+		when(vwapService.getPriceData()).thenReturn(priceDataList);
+		when(vwapService.calculateHourlyVwap(priceDataList)).thenReturn(mockPriceDataResponse);
 
-		    assertEquals(priceDataList.get(0).getEntryNumber(), priceData1.getEntryNumber());
-		    assertEquals(priceDataList.get(0).getCurrencyPair(), priceData1.getCurrencyPair());
-		    assertEquals(priceDataList.get(0).getTimeStamp(), priceData1.getTimeStamp());
-		    assertEquals(priceDataList.get(0).getPrice(), priceData1.getPrice());
-		    assertEquals(priceDataList.get(0).getVolume(), priceData1.getVolume());
-		    verify(vwapService, times(1)).getPriceData();
-		    verify(vwapService, times(1)).calculateHourlyVwap(priceDataList);
+		mockMvc.perform(get("/get-data").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().json(asJsonString(mockPriceDataResponse))); // Check against expected response
 
-		 }
+		assertEquals(priceDataList.get(0).getEntryNumber(), priceData1.getEntryNumber());
+		assertEquals(priceDataList.get(0).getCurrencyPair(), priceData1.getCurrencyPair());
+		assertEquals(priceDataList.get(0).getTimeStamp(), priceData1.getTimeStamp());
+		assertEquals(priceDataList.get(0).getPrice(), priceData1.getPrice());
+		assertEquals(priceDataList.get(0).getVolume(), priceData1.getVolume());
+		verify(vwapService, times(1)).getPriceData();
+		verify(vwapService, times(1)).calculateHourlyVwap(priceDataList);
 
+	}
 
-	 //Helper method
-	  private static String asJsonString(final Object obj) {
-		    try {
-		        return new ObjectMapper().writeValueAsString(obj);
-		    } catch (Exception e) {
-		        throw new RuntimeException(e);
-		    }
+	// Helper method
+	private static String asJsonString(final Object obj) {
+		try {
+			return new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
+	}
 }

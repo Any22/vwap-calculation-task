@@ -19,75 +19,53 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class VwapService {
-	
-	private final PriceDataRepository priceDataRepository ;
-	
+
+	private final PriceDataRepository priceDataRepository;
+
 	public List<PriceData> getPriceData() {
-		
+
 		log.info("Getting all Data from repository...!");
-		
-		List<PriceDataEntity> priceDataEntityList= priceDataRepository.findAll();
-		log.info("The PriceDTO is {}"+ priceDataEntityList);
-			
-		List<PriceData> PriceDTOList = priceDataEntityList.stream()
-				                .map(priceEntity->this.maptoDTO(priceEntity))
-				                .collect(Collectors.toList()); 
-		
+
+		List<PriceDataEntity> priceDataEntityList = priceDataRepository.findAll();
+		log.info("The PriceDTO is {}" + priceDataEntityList);
+
+		List<PriceData> PriceDTOList = priceDataEntityList.stream().map(priceEntity -> this.maptoDTO(priceEntity))
+				.collect(Collectors.toList());
+
 		return PriceDTOList;
-	
+
 	}
 
 	private PriceData maptoDTO(PriceDataEntity pd) {
-		
-	return PriceData.builder()
-			.entryNumber(pd.getEntryNumber())
-			.timeStamp(pd.getTimeStamp())
-			.currencyPair(pd.getCurrencyPair())
-			.price(pd.getPrice())
-			.volume(pd.getVolume())
-			.build();
-				
+
+		return PriceData.builder().entryNumber(pd.getEntryNumber()).timeStamp(pd.getTimeStamp())
+				.currencyPair(pd.getCurrencyPair()).price(pd.getPrice()).volume(pd.getVolume()).build();
+
 	}
 
 	public List<PriceDataResponse> calculateHourlyVwap(List<PriceData> priceData) {
-		 List<PriceDataResponse> vwapList = new ArrayList<>();
-		 // Grouping by currency pair and hour
-        Map<String, Map<Integer, List<PriceData>>> groupedData = priceData.stream()
-            .collect(Collectors.groupingBy(
-                pd -> pd.getCurrencyPair(),
-                Collectors.groupingBy(PriceData::getHour)
-            ));
-    
-     // Calculate VWAP for each currency pair per hour
-        groupedData.forEach((currencyPair, hourlyData) -> {
-            hourlyData.forEach((hour, dataList) -> {
-                // Calculate the weighted price sum
-                double weightedPriceSum = dataList.stream()
-                    .mapToDouble(pd -> pd.getPrice() * pd.getVolume())
-                    .sum();
-                
-                // Calculate the total volume
-                int totalVolume = dataList.stream()
-                    .mapToInt(PriceData::getVolume)  // Access volume directly using method reference
-                    .sum();
+		List<PriceDataResponse> vwapList = new ArrayList<>();
 
-                // Calculate VWAP
-                double vwapCalculated = weightedPriceSum / totalVolume;
-               
-                 vwapList.add( PriceDataResponse.builder()
-                         .uniqueCurrencyPair(currencyPair)
-                         .hourlyData(hour)
-                         .vwap(vwapCalculated)
-                         .build());
-                
-            });          
-        });
-	
+		Map<String, Map<Integer, List<PriceData>>> groupedData = priceData.stream()
+				.collect(Collectors.groupingBy(pd -> pd.getCurrencyPair(), Collectors.groupingBy(PriceData::getHour)));
+
+		groupedData.forEach((currencyPair, hourlyData) -> {
+			hourlyData.forEach((hour, dataList) -> {
+
+				double weightedPriceSum = dataList.stream().mapToDouble(pd -> pd.getPrice() * pd.getVolume()).sum();
+
+				int totalVolume = dataList.stream().mapToInt(PriceData::getVolume).sum();
+
+				double vwapCalculated = weightedPriceSum / totalVolume;
+
+				vwapList.add(PriceDataResponse.builder().uniqueCurrencyPair(currencyPair).hourlyData(hour)
+						.vwap(vwapCalculated).build());
+
+			});
+		});
+
 		return vwapList;
-       
-	}
 
-	
-	
+	}
 
 }
