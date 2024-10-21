@@ -1,13 +1,9 @@
 package com.demo.vwap_calculator.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.demo.vwap_calculator.dto.PriceData;
+import com.demo.vwap_calculator.dto.PriceDataResponse;
+import com.demo.vwap_calculator.entity.PriceDataEntity;
+import com.demo.vwap_calculator.repository.PriceDataRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +12,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.demo.vwap_calculator.dto.PriceData;
-import com.demo.vwap_calculator.dto.PriceDataResponse;
-import com.demo.vwap_calculator.entity.PriceDataEntity;
-import com.demo.vwap_calculator.repository.PriceDataRepository;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+
+
+
+
 
 @ExtendWith(MockitoExtension.class)
 public class VwapServiceTest {

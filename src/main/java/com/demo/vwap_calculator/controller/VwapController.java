@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.vwap_calculator.dto.PriceData;
 import com.demo.vwap_calculator.dto.PriceDataResponse;
+import com.demo.vwap_calculator.exception.NoDataFoundException;
 import com.demo.vwap_calculator.service.VwapService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,17 +26,23 @@ public class VwapController {
 	private final VwapService vwapService;
 	
 	@GetMapping(produces= APPLICATION_JSON_VALUE, value = "/get-data")
-    public ResponseEntity<List> getExistingData() {     
+    public ResponseEntity<List> getExistingData() throws Exception {     
 		
 		try {
-            	List<PriceData> dataResponse = vwapService.getPriceData();
-            	List<PriceDataResponse> priceDataResposne = vwapService.calculateHourlyVwap(dataResponse);
+            	List<PriceData> priceDataDTOList = vwapService.getPriceData();
+            	if (priceDataDTOList.isEmpty() || null == priceDataDTOList) {
+		        	
+		        	throw new NoDataFoundException("No price Data found in database");
+		            
+		          } 
+            	
+            	List<PriceDataResponse> priceDataResposne = vwapService.calculateHourlyVwap(priceDataDTOList);
                 return new ResponseEntity<List>(priceDataResposne, HttpStatus.OK);
 		} catch (Exception ex) {
 			   log.error(ex.getMessage());
 	    	   throw ex;
-		   }  
-        
+		  }  
+      
     }
 	
 
