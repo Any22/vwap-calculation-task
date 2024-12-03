@@ -8,14 +8,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceData {
@@ -24,7 +23,7 @@ public class PriceData {
 	private String currencyPair;
 	private double price;
 	private int volume;
-
+	
 	public int getHour() {
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);

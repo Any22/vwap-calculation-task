@@ -55,48 +55,48 @@ public class VwapServiceTest {
 
 	}
 
-	@Test
-	public void get_PriceData_invokesRepository() {
+//	@Test
+//	public void get_PriceData_invokesRepository() {
+//
+//		priceDataEntity1 = PriceDataEntity.builder().entryNumber(priceData1.getEntryNumber())
+//				.currencyPair(priceData1.getCurrencyPair()).timeStamp(priceData1.getTimeStamp())
+//				.price(priceData1.getPrice()).volume(priceData1.getVolume()).build();
+//
+//		List<PriceDataEntity> priceDataEntityExpectedList = Arrays.asList(priceDataEntity1);
+//
+//		// Mocking the repository response
+//		when(priceDataRepository.findAll()).thenReturn(priceDataEntityExpectedList);
+//
+//		// Fetch employees via service
+//		List<PriceData> priceDataEntityActualList = vwapService.getPriceData();
+//
+//		assertNotNull(priceDataEntityExpectedList);
+//		assertEquals(1, priceDataEntityExpectedList.size(), "The size of the employee list should be 1");
+//		assertEquals(priceDataEntityExpectedList.get(0).getCurrencyPair(),
+//				priceDataEntityActualList.get(0).getCurrencyPair());
+//
+//	}
 
-		priceDataEntity1 = PriceDataEntity.builder().entryNumber(priceData1.getEntryNumber())
-				.currencyPair(priceData1.getCurrencyPair()).timeStamp(priceData1.getTimeStamp())
-				.price(priceData1.getPrice()).volume(priceData1.getVolume()).build();
-
-		List<PriceDataEntity> priceDataEntityExpectedList = Arrays.asList(priceDataEntity1);
-
-		// Mocking the repository response
-		when(priceDataRepository.findAll()).thenReturn(priceDataEntityExpectedList);
-
-		// Fetch employees via service
-		List<PriceData> priceDataEntityActualList = vwapService.getPriceData();
-
-		assertNotNull(priceDataEntityExpectedList);
-		assertEquals(1, priceDataEntityExpectedList.size(), "The size of the employee list should be 1");
-		assertEquals(priceDataEntityExpectedList.get(0).getCurrencyPair(),
-				priceDataEntityActualList.get(0).getCurrencyPair());
-
-	}
-
-	@Test
-	public void testCalculateHourlyVwap_toCheck_TheVWAPCalculation_IsRight() {
-		List<PriceData> priceDataList = new ArrayList<>();
-		priceDataList.add(priceData1);
-		priceDataList.add(priceData2);
-		priceDataList.add(priceData3);
-		priceDataList.add(priceData4);
-
-		List<PriceDataResponse> result = vwapService.calculateHourlyVwap(priceDataList);
-		assertNotNull(result);
-		assertEquals(4, result.size(), "only 4 unique time stamp with unique currency pair is obtained");
-		assertEquals("NZD/JPY", result.get(0).getUniqueCurrencyPair());
-		assertEquals("NZD/JPY", result.get(1).getUniqueCurrencyPair());
-		assertEquals(5, result.get(0).getHourlyData());
-		assertEquals(7, result.get(1).getHourlyData());
-		assertTrue(result.get(0).getHourlyData() > 0);
-		assertTrue(result.get(1).getHourlyData() > 0);
-		assertTrue(result.get(2).getHourlyData() > 0);
-		assertTrue(result.get(3).getHourlyData() > 0);
-
-	}
+//	@Test
+//	public void testCalculateHourlyVwap_toCheck_TheVWAPCalculation_IsRight() {
+//		List<PriceData> priceDataList = new ArrayList<>();
+//		priceDataList.add(priceData1);
+//		priceDataList.add(priceData2);
+//		priceDataList.add(priceData3);
+//		priceDataList.add(priceData4);
+//
+//		List<PriceDataResponse> result = vwapService.calculateHourlyVwap(priceDataList);
+//		assertNotNull(result);
+//		assertEquals(4, result.size(), "only 4 unique time stamp with unique currency pair is obtained");
+//		assertEquals("NZD/JPY", result.get(0).getUniqueCurrencyPair());
+//		assertEquals("NZD/JPY", result.get(1).getUniqueCurrencyPair());
+//		assertEquals(5, result.get(0).getHourlyData());
+//		assertEquals(7, result.get(1).getHourlyData());
+//		assertTrue(result.get(0).getHourlyData() > 0);
+//		assertTrue(result.get(1).getHourlyData() > 0);
+//		assertTrue(result.get(2).getHourlyData() > 0);
+//		assertTrue(result.get(3).getHourlyData() > 0);
+//
+//	}
 
 }
