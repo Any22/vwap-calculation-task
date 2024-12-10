@@ -11,8 +11,6 @@ import lombok.Data;
 @AllArgsConstructor 
 @Builder
 public class PriceDataRequestOptional {
-	
-	private Integer page;
 	private Integer pageSize;
 
 }

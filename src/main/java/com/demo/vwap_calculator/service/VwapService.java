@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,24 +32,27 @@ public class VwapService {
 	private final PriceDataRepository priceDataRepository;
 
 	public PriceResponse getPriceData(PriceDataRequestOptional optionalRequest) {
-
+		 
 		log.info("Getting all Data from repository.It may take some time ..!");
 		
 		List<PriceData> priceDataList = new ArrayList<>();
-        Pageable page = PageRequest.of(optionalRequest.getPage(),optionalRequest.getPageSize());
+		log.info("page size is {}", optionalRequest.getPageSize().toString() );
+           Pageable pageable = PageRequest.of(0,optionalRequest.getPageSize());
+        	//log.debug("page is {} and page size is {}", optionalRequest.getPage().toString(), optionalRequest.getPageSize().toString() );
+			for (PriceDataEntity price : priceDataRepository.findAll(pageable)) {
+				priceDataList.add( new PriceData(price.getEntryNumber(),price.getTimeStamp(),price.getCurrencyPair()
+						,price.getPrice(), price.getVolume()));
+				log.debug("page from repository containing data {}",price);
+			}
+		
+			log.info("The PriceDTO is {}", priceDataList);
 	
+		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList,optionalRequest.getPageSize() );
 		
-		for (PriceDataEntity price : priceDataRepository.findAll(page)) {
-			priceDataList.add( new PriceData(price.getEntryNumber(),price.getTimeStamp(),price.getCurrencyPair()
-					,price.getPrice(), price.getVolume()));
-		}
-		
-		log.info("The PriceDTO is {}" + priceDataList);
-	  PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList);
-
-	return priceDataResponse;
-			
+		return priceDataResponse;
 	}
+	
+
 
 //	private PriceData maptoDTO(PriceDataEntity pd) {
 //
@@ -56,9 +60,31 @@ public class VwapService {
 //				.currencyPair(pd.getCurrencyPair()).price(pd.getPrice()).volume(pd.getVolume()).build();
 //
 //	}
+	
+	public PriceResponse getPriceDataUnPaged() {
+		
+        log.info("Excecuting getPriceDataUnPager()");
+		
+		List<PriceData> priceDataList = new ArrayList<>();
+		  
+			for (PriceDataEntity price : priceDataRepository.findAll()) {
+				priceDataList.add( new PriceData(price.getEntryNumber(),price.getTimeStamp(),price.getCurrencyPair()
+						,price.getPrice(), price.getVolume()));
+			}
+		
+			log.info("The PriceDTO is {}" + priceDataList);
+	
+		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList,0 );
+		
+		return priceDataResponse;
+	
+		
+		
+	}
 
-	 public PriceResponse calculateHourlyVwap(List<PriceData> priceDataList) {
+	 public PriceResponse calculateHourlyVwap(List<PriceData> priceDataList , Integer pageSize) {
 			List<PriceDataResponse> vwapList = new ArrayList<>();
+			
 
 			Map<String, Map<Integer, List<PriceData>>> groupedData = priceDataList.stream()
 					.collect(Collectors.groupingBy(pd -> pd.getCurrencyPair(), Collectors.groupingBy(PriceData::getHour)));
@@ -71,14 +97,28 @@ public class VwapService {
 					int totalVolume = dataList.stream().mapToInt(PriceData::getVolume).sum();
 
 					double vwapCalculated = weightedPriceSum / totalVolume;
-
+					
 					vwapList.add(PriceDataResponse.builder().uniqueCurrencyPair(currencyPair).hourlyData(hour)
 							.vwap(vwapCalculated).build());
 
 				});
 			});
-		return 	PriceResponse.builder().priceDataResponse(vwapList).build();
+			Integer totalPriceData = vwapList.size();
+			return 	PriceResponse.builder().totalPriceData(totalPriceData).totalPages(pageSize).priceDataResponse(vwapList).build();
 			
 
 		}
+
+
+
+	public PriceData savedData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	
+
+	
 }

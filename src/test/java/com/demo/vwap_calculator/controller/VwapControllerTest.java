@@ -41,13 +41,13 @@ public class VwapControllerTest {
 	@BeforeEach
 	public void setUp() {
 		
-		when(vwapService.getPriceData(any())).thenReturn(new PriceResponse(new ArrayList<>()));
+		//when(vwapService.getPriceData(any())).thenReturn(new PriceResponse(new ArrayList<>()));
 
 	}
 
 	@Test
 	public void getExistingData_retrunSucess() throws Exception {
-		ResponseEntity<PriceResponse> response = vwapController.getExistingData(2,3).call();
+		ResponseEntity<PriceResponse> response = vwapController.getExistingData(23).call();
 	    //assertThat(response.getStatusCode(), is(HttpStatus.OK));
 		assertAll("getExistingData_retrunSucess", 
 				() -> Assertions.assertEquals(HttpStatus.OK, response.getStatusCode()),

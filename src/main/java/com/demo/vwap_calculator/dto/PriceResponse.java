@@ -18,7 +18,9 @@ import lombok.Setter;
 @NoArgsConstructor 
 @AllArgsConstructor 
 public class PriceResponse {
-	
+	private Integer totalPriceData;
+	private Integer totalPages;
+	private Integer currentPage;
 	@JsonProperty(value="ResposneWithPagination")
 	private List<PriceDataResponse> priceDataResponse;
 

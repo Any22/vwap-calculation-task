@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 
 		ErrorMessage error = new ErrorMessage();
 		error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		error.setMessage("An unexpected error occurred: " + ex.getMessage());
+		error.setMessage("An unexpected error occurred: " + ex.getMessage().toString());
 
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 
 		ErrorMessage error = new ErrorMessage();
 		error.setErrorCode(HttpStatus.NOT_FOUND.value());
-		error.setMessage(ex.getMessage());
+		error.setMessage(ex.getMessage().toString());
 
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 

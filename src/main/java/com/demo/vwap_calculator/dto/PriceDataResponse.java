@@ -17,9 +17,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceDataResponse {
-	private Integer totalPriceData;
-	private Integer totalPages;
-    private Integer currentPage;
 	private String uniqueCurrencyPair;
 	private Integer hourlyData;
 	private Double vwap;
