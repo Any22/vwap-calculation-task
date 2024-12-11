@@ -112,8 +112,8 @@ public class VwapService {
 
 
 	public PriceData savedData() {
-		// TODO Auto-generated method stub
-		return null;
+		
+				return null;
 	}
 
 

@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class PriceData {
 	private Integer entryNumber;
-	
 	private String timeStamp;
 	private String currencyPair;
 	private double price;

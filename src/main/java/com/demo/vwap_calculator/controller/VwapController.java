@@ -31,7 +31,7 @@ public class VwapController {
 
 	private static final Integer defaultSize = 3;
 
-	@RequestMapping(method= GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
+	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
 	public Callable<ResponseEntity<PriceResponse>> getExistingData(
 			@RequestParam(value = "page_size", required = false) Integer pageSize) throws Exception {
 
@@ -58,7 +58,7 @@ public class VwapController {
 
 	}
 
-	@RequestMapping(method= GET ,produces = APPLICATION_JSON_VALUE, value = "/get-data-unpaged")
+	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data-unpaged")
 	public Callable<ResponseEntity<PriceResponse>> getExistingDataUnPaged() throws Exception {
 
 		final long start = System.currentTimeMillis();
@@ -81,24 +81,23 @@ public class VwapController {
 		};
 
 	}
-	
-	@RequestMapping(method = POST, produces = APPLICATION_JSON_VALUE,consumes = APPLICATION_JSON_VALUE, 
-			value = "/create")
-	public Callable<ResponseEntity<PriceData>> createNewData(@RequestBody @Valid String timeStamp,String currencyPair,double price,
-	int volume) {
 
-		final long start = System.currentTimeMillis();
-		return new Callable<ResponseEntity<PriceData>>() {
+	@RequestMapping(method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE, value = "/create")
+	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid String timeStamp, @Valid String currencyPair,
+			@Valid double price, @Valid int volume) {
+
+		long start = System.currentTimeMillis();
+		return new Callable<ResponseEntity<String>>() {
 			@Override
-			public ResponseEntity<PriceData> call() throws Exception {
+			public ResponseEntity<String> call() throws Exception {
 				try {
 					PriceData priceData = vwapService.savedData();
-					
+					return new ResponseEntity<>("done ", HttpStatus.CREATED);
 				} catch (Exception ex) {
 					log.error(ex.getMessage());
 					throw ex;
 				}
-				return null;
+				
 
 			}
 
