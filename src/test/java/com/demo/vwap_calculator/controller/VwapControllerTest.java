@@ -54,5 +54,8 @@ public class VwapControllerTest {
 				() -> Assertions.assertNotNull(response.getBody()));
 	}
 	
-	
+//	@Test
+//	public void createNewData_ReturnSuccess() {
+//		 vwapService.savedData(priceData);
+//	}
 }

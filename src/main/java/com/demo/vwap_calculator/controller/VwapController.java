@@ -83,7 +83,7 @@ public class VwapController {
 
 	}
 
-	@RequestMapping(method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE, value = "/create")
+	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
 	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
 
 		long start = System.currentTimeMillis();
@@ -91,8 +91,8 @@ public class VwapController {
 			@Override
 			public ResponseEntity<String> call() throws Exception {
 				try {
-					PriceData priceData = vwapService.savedData();
-					return new ResponseEntity<>("done ", HttpStatus.CREATED);
+					 vwapService.savedData(priceData);
+					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
 				} catch (Exception ex) {
 					log.error(ex.getMessage());
 					throw ex;

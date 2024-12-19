@@ -38,7 +38,7 @@ public class VwapService {
 		List<PriceData> priceDataList = new ArrayList<>();
 		log.info("page size is {}", optionalRequest.getPageSize().toString() );
            Pageable pageable = PageRequest.of(0,optionalRequest.getPageSize());
-        	//log.debug("page is {} and page size is {}", optionalRequest.getPage().toString(), optionalRequest.getPageSize().toString() );
+        	
 			for (PriceDataEntity price : priceDataRepository.findAll(pageable)) {
 				priceDataList.add( new PriceData(price.getEntryNumber(),price.getTimeStamp(),price.getCurrencyPair()
 						,price.getPrice(), price.getVolume()));
@@ -112,9 +112,18 @@ public class VwapService {
 
 
 
-	public PriceData savedData() {
+	public void savedData(PriceData priceData) {
 		
-				return null;
+		PriceDataEntity entity= PriceDataEntity.builder()
+				.timeStamp(priceData.getTimeStamp())
+				.currencyPair(priceData.getCurrencyPair())
+				.price(priceData.getPrice())
+				.volume(priceData.getVolume())
+				.build();
+		
+		priceDataRepository.save(entity);
+		
+			
 	}
 
 
