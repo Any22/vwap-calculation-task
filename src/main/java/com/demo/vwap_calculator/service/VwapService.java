@@ -84,7 +84,7 @@ public class VwapService {
 
 	 public PriceResponse calculateHourlyVwap(List<PriceData> priceDataList , Integer pageSize) {
 			List<PriceDataResponse> vwapList = new ArrayList<>();
-			
+			log.info("The page size inside calculateHourlyVWAP is{}", pageSize);
 
 			Map<String, Map<Integer, List<PriceData>>> groupedData = priceDataList.stream()
 					.collect(Collectors.groupingBy(pd -> pd.getCurrencyPair(), Collectors.groupingBy(PriceData::getHour)));
@@ -100,11 +100,12 @@ public class VwapService {
 					
 					vwapList.add(PriceDataResponse.builder().uniqueCurrencyPair(currencyPair).hourlyData(hour)
 							.vwap(vwapCalculated).build());
-
+					
 				});
+				
 			});
 			Integer totalPriceData = vwapList.size();
-			return 	PriceResponse.builder().totalPriceData(totalPriceData).totalPages(pageSize).priceDataResponse(vwapList).build();
+			return 	PriceResponse.builder().totalPriceData(vwapList.size()).totalPages(pageSize-1).priceDataResponse(vwapList).build();
 			
 
 		}

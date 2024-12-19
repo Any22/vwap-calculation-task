@@ -29,7 +29,7 @@ public class VwapController {
 	@Inject
 	private VwapService vwapService;
 
-	private static final Integer defaultSize = 3;
+	private static final Integer defaultSize = 2;
 
 	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
 	public Callable<ResponseEntity<PriceResponse>> getExistingData(
@@ -40,12 +40,13 @@ public class VwapController {
 			@Override
 			public ResponseEntity<PriceResponse> call() throws Exception {
 				try {
-					Integer pSize = pageSize == null ? defaultSize : pageSize;
+					Integer pSize = ((pageSize == null)|| pageSize.equals(0)) ? defaultSize : pageSize;
+					log.debug("The pagesize is "+pSize);
 					PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
 							.build();
 					PriceResponse priceResponse = vwapService.getPriceData(optionalRequest);
 					long duration = System.currentTimeMillis() - start;
-					log.debug("time taken" + duration);
+					log.info("time taken" + duration);
 					return new ResponseEntity<>(priceResponse, HttpStatus.OK);
 				} catch (Exception ex) {
 					log.error(ex.getMessage());
@@ -83,8 +84,7 @@ public class VwapController {
 	}
 
 	@RequestMapping(method = POST, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE, value = "/create")
-	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid String timeStamp, @Valid String currencyPair,
-			@Valid double price, @Valid int volume) {
+	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
 
 		long start = System.currentTimeMillis();
 		return new Callable<ResponseEntity<String>>() {
