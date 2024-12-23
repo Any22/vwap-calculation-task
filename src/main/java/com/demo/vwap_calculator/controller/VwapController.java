@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,18 +17,22 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.demo.vwap_calculator.dto.PriceData;
 import com.demo.vwap_calculator.dto.PriceDataRequestOptional;
+import com.demo.vwap_calculator.dto.PriceDataResponse;
 import com.demo.vwap_calculator.dto.PriceResponse;
+import com.demo.vwap_calculator.repository.PriceDataRepository;
 import com.demo.vwap_calculator.service.VwapService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+// duplication of data is found after making the post request . Need to solve it 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @Validated
 public class VwapController {
-	@Inject
-	private VwapService vwapService;
+
+	private final VwapService vwapService;
 
 	private static final Integer defaultSize = 2;
 
@@ -40,8 +45,8 @@ public class VwapController {
 			@Override
 			public ResponseEntity<PriceResponse> call() throws Exception {
 				try {
-					Integer pSize = ((pageSize == null)|| pageSize.equals(0)) ? defaultSize : pageSize;
-					log.debug("The pagesize is "+pSize);
+					Integer pSize = ((pageSize == null) || pageSize.equals(0)) ? defaultSize : pageSize;
+					log.debug("The pagesize is " + pSize);
 					PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
 							.build();
 					PriceResponse priceResponse = vwapService.getPriceData(optionalRequest);
@@ -59,6 +64,26 @@ public class VwapController {
 
 	}
 
+//	@RequestMapping(method = GET, consumes = APPLICATION_JSON_VALUE, value = "/get-data/{hour}")
+//	public Callable<ResponseEntity<String>> getHourlyData(@PathVariable String timeInHours) {
+//
+//		long start = System.currentTimeMillis();
+//		return new Callable<ResponseEntity<String>>() {
+//			@Override
+//			public ResponseEntity<String> call() throws Exception {
+//				try {
+//					PriceDataResponse priceDataResponseHourly= vwapService.getPriceDataByHour(timeInHours);
+//					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
+//				} catch (Exception ex) {
+//					log.error(ex.getMessage());
+//					throw ex;
+//				}
+//
+//			}
+//
+//		};
+//
+//	}
 	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data-unpaged")
 	public Callable<ResponseEntity<PriceResponse>> getExistingDataUnPaged() throws Exception {
 
@@ -91,18 +116,20 @@ public class VwapController {
 			@Override
 			public ResponseEntity<String> call() throws Exception {
 				try {
-					 vwapService.savedData(priceData);
+
+					vwapService.savedData(priceData);
 					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
 				} catch (Exception ex) {
 					log.error(ex.getMessage());
 					throw ex;
 				}
-				
 
 			}
 
 		};
 
 	}
+	
+	
 
 }
