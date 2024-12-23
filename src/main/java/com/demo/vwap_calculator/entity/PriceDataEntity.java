@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "price_data_table")
+@Table(name = "price_data_table", uniqueConstraints = {
+	    @UniqueConstraint(columnNames = {"currency_pair", "hour"})
+})
 @Getter
 @Setter
 @Builder
@@ -36,4 +39,7 @@ public class PriceDataEntity {
 
 	@Column(name = "volume", nullable = false)
 	private int volume;
+	
+	@Column(name = "hour")
+	private int hour;
 }

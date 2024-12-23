@@ -2,10 +2,9 @@ package com.demo.vwap_calculator.controller;
 
 import java.util.concurrent.Callable;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +62,8 @@ public class VwapController {
 		};
 
 	}
+	
+	//to be implemented 
 
 //	@RequestMapping(method = GET, consumes = APPLICATION_JSON_VALUE, value = "/get-data/{hour}")
 //	public Callable<ResponseEntity<String>> getHourlyData(@PathVariable String timeInHours) {
@@ -84,29 +85,7 @@ public class VwapController {
 //		};
 //
 //	}
-	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data-unpaged")
-	public Callable<ResponseEntity<PriceResponse>> getExistingDataUnPaged() throws Exception {
-
-		final long start = System.currentTimeMillis();
-		return new Callable<ResponseEntity<PriceResponse>>() {
-			@Override
-			public ResponseEntity<PriceResponse> call() throws Exception {
-				try {
-
-					PriceResponse priceResponse = vwapService.getPriceDataUnPaged();
-					long duration = System.currentTimeMillis() - start;
-					log.debug("time taken" + duration);
-					return new ResponseEntity<>(priceResponse, HttpStatus.OK);
-				} catch (Exception ex) {
-					log.error(ex.getMessage());
-					throw ex;
-				}
-
-			}
-
-		};
-
-	}
+	
 
 	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
 	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
@@ -116,7 +95,6 @@ public class VwapController {
 			@Override
 			public ResponseEntity<String> call() throws Exception {
 				try {
-
 					vwapService.savedData(priceData);
 					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
 				} catch (Exception ex) {

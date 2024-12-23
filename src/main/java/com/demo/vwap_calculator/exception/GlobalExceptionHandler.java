@@ -40,5 +40,16 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 
 	}
+	
+	@ExceptionHandler(DuplicateRecordExist.class)
+	public ResponseEntity<ErrorMessage> duplicateRecordExists (DuplicateRecordExist ex) {
+
+		ErrorMessage error = new ErrorMessage();
+		error.setErrorCode(HttpStatus.CONFLICT.value());
+		error.setMessage("The record already exist please verify and enter new record");
+
+		return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+
+	}
 
 }
