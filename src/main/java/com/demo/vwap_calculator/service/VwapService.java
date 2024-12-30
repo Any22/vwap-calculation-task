@@ -31,39 +31,27 @@ public class VwapService {
 	private final PriceDataRepository priceDataRepository;
 	private final PriceDataResponseEntityRepository priceDataResponseEntityRepository;
 
-	public PriceResponse getPriceData(PriceDataRequestOptional optionalRequest) {
+	public void savedData(PriceData priceData) {
 
-		log.info("Executing getPriceData() with optionalRequest {}", optionalRequest.getPageSize().toString());
+		if (priceDataRepository.existsByCurrencyPairAndHour(priceData.getCurrencyPair(), priceData.getHour())) {
 
-		List<PriceDataResponse> priceDataList = new ArrayList<>();
-
-		Pageable pageable = PageRequest.of(0, optionalRequest.getPageSize());
-
-		for (PriceDataResponseEntity price : priceDataResponseEntityRepository.findAll(pageable)) {
-	         
-			priceDataList.add( new PriceDataResponse( price.getUniqueCurrencyPair(),
-					price.getHourlyData(), price.getVwap() ) );
- 
-			log.debug("page from repository containing data {} ", price);
+			throw new DuplicateRecordExist("The record aready exist....!!");
 		}
-
-		log.info("The PriceDataResposne is {}", priceDataList);
-
-		return  PriceResponse.builder().totalPages(null).totalPriceData(null).currentPage(null).priceDataResponse(priceDataList)
-				.build();
-
 		
+		PriceDataEntity entity = PriceDataEntity.builder().timeStamp(priceData.getTimeStamp())
+				.currencyPair(priceData.getCurrencyPair()).price(priceData.getPrice()).volume(priceData.getVolume())
+				.hour(priceData.getHour()).build();
+
+		priceDataRepository.save(entity);
+
+		List<PriceData> priceDataList = new ArrayList<>();
+		priceDataList.add(priceData);
+
+		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2);
+
+		this.saveTheCalculatedValues(priceDataResponse.getPriceDataResponse());
 	}
-
-//	private PriceData maptoDTO(PriceDataEntity pd) {
-//
-//		return PriceData.builder().entryNumber(pd.getEntryNumber()).timeStamp(pd.getTimeStamp())
-//				.currencyPair(pd.getCurrencyPair()).price(pd.getPrice()).volume(pd.getVolume()).build();
-//
-//	}
-
 	
-
 	public PriceResponse calculateHourlyVwap(List<PriceData> priceDataList, Integer pageSize) {
 		List<PriceDataResponse> vwapList = new ArrayList<>();
 		log.info("The page size inside calculateHourlyVWAP is{}", pageSize);
@@ -103,31 +91,31 @@ public class VwapService {
 
 	}
 
-	public void savedData(PriceData priceData) {
-		
-		if ( priceDataRepository.existsByCurrencyPairAndHour(priceData.getCurrencyPair(), priceData.getHour()) ){
-			
-			throw new DuplicateRecordExist("The record aready exist....!!");
+
+	public PriceResponse getPriceData(PriceDataRequestOptional optionalRequest) {
+
+		log.info("Executing getPriceData() with optionalRequest {}", optionalRequest.getPageSize().toString());
+
+		List<PriceDataResponse> priceDataList = new ArrayList<>();
+
+		Pageable pageable = PageRequest.of(0, optionalRequest.getPageSize());
+
+		for (PriceDataResponseEntity price : priceDataResponseEntityRepository.findAll(pageable)) {
+
+			priceDataList
+					.add(new PriceDataResponse(price.getUniqueCurrencyPair(), price.getHourlyData(), price.getVwap()));
+
+			log.debug("page from repository containing data {} ", price);
 		}
-		PriceDataEntity entity = PriceDataEntity.builder()
-				.timeStamp(priceData.getTimeStamp())
-				.currencyPair(priceData.getCurrencyPair())
-				.price(priceData.getPrice())
-				.volume(priceData.getVolume())
-				.hour(priceData.getHour())
-				.build();
 
-		priceDataRepository.save(entity);
-		
+		log.info("The PriceDataResposne is {}", priceDataList);
 
-		List<PriceData> priceDataList = new ArrayList<>();
-		priceDataList.add(priceData);
-		
-		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2); 
-		
-		this.saveTheCalculatedValues(priceDataResponse.getPriceDataResponse());
+		return PriceResponse.builder().totalPages(optionalRequest.getPageSize()).totalPriceData(priceDataList.size())
+				.priceDataResponse(priceDataList).build();
+
 	}
 
+	
 //
 //	public PriceDataResponse getPriceDataByHour(String timeInHours) {
 //		
