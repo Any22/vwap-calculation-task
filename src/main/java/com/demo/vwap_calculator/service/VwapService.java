@@ -85,8 +85,6 @@ public class VwapService {
 
 		});
 
-		Integer totalPriceData = vwapList.size();
-		this.saveTheCalculatedValues(vwapList);
 		return PriceResponse.builder().totalPriceData(vwapList.size()).totalPages(pageSize - 1)
 				.priceDataResponse(vwapList).build();
 
@@ -110,6 +108,11 @@ public class VwapService {
 			throw new DuplicateRecordExist("The record aready exist....!!");
 		}
 
+		List<PriceData> priceDataList = new ArrayList<>();
+		priceDataList.add(priceData);
+		
+		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2); 
+		
 		PriceDataEntity entity = PriceDataEntity.builder()
 				.timeStamp(priceData.getTimeStamp())
 				.currencyPair(priceData.getCurrencyPair())
@@ -119,7 +122,10 @@ public class VwapService {
 				.build();
 
 		priceDataRepository.save(entity);
+		
+		
 
+		//this.saveTheCalculatedValues(vwapList);
 	}
 
 //
