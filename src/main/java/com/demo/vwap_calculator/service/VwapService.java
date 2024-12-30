@@ -35,22 +35,24 @@ public class VwapService {
 
 		log.info("Executing getPriceData() with optionalRequest {}", optionalRequest.getPageSize().toString());
 
-		List<PriceData> priceDataList = new ArrayList<>();
+		List<PriceDataResponse> priceDataList = new ArrayList<>();
 
 		Pageable pageable = PageRequest.of(0, optionalRequest.getPageSize());
 
-		for (PriceDataEntity price : priceDataRepository.findAll(pageable)) {
-			priceDataList.add(new PriceData(price.getEntryNumber(), price.getTimeStamp(), price.getCurrencyPair(),
-					price.getPrice(), price.getVolume()));
-
+		for (PriceDataResponseEntity price : priceDataResponseEntityRepository.findAll(pageable)) {
+	         
+			priceDataList.add( new PriceDataResponse( price.getUniqueCurrencyPair(),
+					price.getHourlyData(), price.getVwap() ) );
+ 
 			log.debug("page from repository containing data {} ", price);
 		}
 
-		log.info("The PriceDataDTO is {}", priceDataList);
+		log.info("The PriceDataResposne is {}", priceDataList);
 
-		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, optionalRequest.getPageSize());
+		return  PriceResponse.builder().totalPages(null).totalPriceData(null).currentPage(null).priceDataResponse(priceDataList)
+				.build();
 
-		return priceDataResponse;
+		
 	}
 
 //	private PriceData maptoDTO(PriceDataEntity pd) {
@@ -107,12 +109,6 @@ public class VwapService {
 			
 			throw new DuplicateRecordExist("The record aready exist....!!");
 		}
-
-		List<PriceData> priceDataList = new ArrayList<>();
-		priceDataList.add(priceData);
-		
-		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2); 
-		
 		PriceDataEntity entity = PriceDataEntity.builder()
 				.timeStamp(priceData.getTimeStamp())
 				.currencyPair(priceData.getCurrencyPair())
@@ -123,9 +119,13 @@ public class VwapService {
 
 		priceDataRepository.save(entity);
 		
-		
 
-		//this.saveTheCalculatedValues(vwapList);
+		List<PriceData> priceDataList = new ArrayList<>();
+		priceDataList.add(priceData);
+		
+		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2); 
+		
+		this.saveTheCalculatedValues(priceDataResponse.getPriceDataResponse());
 	}
 
 //
