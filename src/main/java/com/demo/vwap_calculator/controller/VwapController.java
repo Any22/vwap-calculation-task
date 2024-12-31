@@ -34,6 +34,28 @@ public class VwapController {
 	private final VwapService vwapService;
 
 	private static final Integer defaultSize = 2;
+	
+	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
+	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
+
+		long start = System.currentTimeMillis();
+		return new Callable<ResponseEntity<String>>() {
+			@Override
+			public ResponseEntity<String> call() throws Exception {
+				try {
+					vwapService.savedData(priceData);
+					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
+				} catch (Exception ex) {
+					log.error(ex.getMessage());
+					throw ex;
+				}
+
+			}
+
+		};
+
+	}
+	
 
 	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
 	public Callable<ResponseEntity<PriceResponse>> getExistingData(
@@ -87,26 +109,6 @@ public class VwapController {
 //	}
 	
 
-	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
-	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
-
-		long start = System.currentTimeMillis();
-		return new Callable<ResponseEntity<String>>() {
-			@Override
-			public ResponseEntity<String> call() throws Exception {
-				try {
-					vwapService.savedData(priceData);
-					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
-				} catch (Exception ex) {
-					log.error(ex.getMessage());
-					throw ex;
-				}
-
-			}
-
-		};
-
-	}
 	
 	
 

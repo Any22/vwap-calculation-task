@@ -109,8 +109,9 @@ public class VwapService {
 		}
 
 		log.info("The PriceDataResposne is {}", priceDataList);
+	Integer pageSize =( optionalRequest.getPageSize()  > priceDataList.size() ) ? priceDataList.size()-1 : optionalRequest.getPageSize()-1;
 
-		return PriceResponse.builder().totalPages(optionalRequest.getPageSize()).totalPriceData(priceDataList.size())
+		return PriceResponse.builder().currentPage(pageSize).totalPriceData(priceDataList.size())
 				.priceDataResponse(priceDataList).build();
 
 	}
