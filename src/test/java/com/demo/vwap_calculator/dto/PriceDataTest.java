@@ -19,7 +19,7 @@ public class PriceDataTest {
 
 	@BeforeAll
 	static void setup() {
-		priceData = PriceData.builder().entryNumber(1).currencyPair("AUD/USD").timeStamp("05:03").price(0.342)
+		priceData = PriceData.builder().currencyPair("AUD/USD").timeStamp("05:03").price(0.342)
 				.volume(3454).build();
 	}
 

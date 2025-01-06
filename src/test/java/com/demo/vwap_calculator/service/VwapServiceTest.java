@@ -41,16 +41,16 @@ public class VwapServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		priceData1 = PriceData.builder().entryNumber(1).currencyPair("AUD/USD").timeStamp("05:01 AM").price(0.646)
+		priceData1 = PriceData.builder().currencyPair("AUD/USD").timeStamp("05:01 AM").price(0.646)
 				.volume(210).build();
 
-		priceData2 = PriceData.builder().entryNumber(2).currencyPair("NZD/JPY").timeStamp("05:02 AM").price(0.136)
+		priceData2 = PriceData.builder().currencyPair("NZD/JPY").timeStamp("05:02 AM").price(0.136)
 				.volume(497).build();
 
-		priceData3 = PriceData.builder().entryNumber(3).currencyPair("AUD/USD").timeStamp("07:01 AM").price(0.345)
+		priceData3 = PriceData.builder().currencyPair("AUD/USD").timeStamp("07:01 AM").price(0.345)
 				.volume(239).build();
 
-		priceData4 = PriceData.builder().entryNumber(4).currencyPair("NZD/JPY").timeStamp("07:03 AM").price(0.894)
+		priceData4 = PriceData.builder().currencyPair("NZD/JPY").timeStamp("07:03 AM").price(0.894)
 				.volume(3454).build();
 
 	}

@@ -16,8 +16,17 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update 
+   rabbitmq:
+     host: localhost
+     port: 5672
+     username: guest
+     password: guest
+queue:
+  name: price-data-queue
+     
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+ 
