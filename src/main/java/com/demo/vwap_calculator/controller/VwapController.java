@@ -19,6 +19,7 @@ import com.demo.vwap_calculator.dto.PriceDataRequestOptional;
 import com.demo.vwap_calculator.dto.PriceDataResponse;
 import com.demo.vwap_calculator.dto.PriceResponse;
 import com.demo.vwap_calculator.repository.PriceDataRepository;
+import com.demo.vwap_calculator.service.PriceDataProducer;
 import com.demo.vwap_calculator.service.VwapService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -32,8 +33,25 @@ import lombok.extern.slf4j.Slf4j;
 public class VwapController {
 
 	private final VwapService vwapService;
+	
+	private final PriceDataProducer priceDataProducer;
 
-	private static final Integer defaultSize = 2;
+	private static final Integer defaultPageSize = 2;
+	
+	/******************************************************************************************************************
+	 *  The price data is received and necessary calculations are being done which will be available to see through 
+	 *  GET Method . The price data not need to be stored in data base for following reasons:
+	 *  - Immediate processing : Since the data is processed as soon as it arrives , storing in RabbitMQ for short-term 
+	 *  handling is suffice.
+	 *  - Transient Data : If the data object is needed for calculation, not for future reference,overhead of database
+	 *  storage can be avoided .
+	 *  - Performance : Avoiding database storage can reduce the latency and improve the performance application
+	 *  - Simplicity : Easier to maintain system 
+	 *  Note : for auditing , compliance and data analysis , data can be stored in data base (it will be required)
+	 *  
+	 * @param priceData
+	 * @return ResponseEntity of String
+	 ******************************************************************************************************************/
 	
 	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
 	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
@@ -44,9 +62,9 @@ public class VwapController {
 			public ResponseEntity<String> call() throws Exception {
 				try {
 					vwapService.savedData(priceData);
-					return new ResponseEntity<>(" The data has been created successfully ", HttpStatus.CREATED);
+					return new ResponseEntity<>(" The data has sent to queue for processing ", HttpStatus.CREATED);
 				} catch (Exception ex) {
-					log.error(ex.getMessage());
+				//	log.error(ex.getMessage());
 					throw ex;
 				}
 
@@ -66,7 +84,7 @@ public class VwapController {
 			@Override
 			public ResponseEntity<PriceResponse> call() throws Exception {
 				try {
-					Integer pSize = ((pageSize == null) || pageSize.equals(0)) ? defaultSize : pageSize;
+					Integer pSize = ((pageSize == null) || pageSize.equals(0)) ? defaultPageSize : pageSize;
 					log.debug("The pagesize is " + pSize);
 					PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
 							.build();

@@ -23,7 +23,7 @@ public class PriceDataConsumer {
 
 	    private final Map<String, List<PriceData>> priceDataMap = new ConcurrentHashMap<>();
 
-	    @RabbitListener(queues = "${queue.name}")
+	    @RabbitListener(queues = "${rabbitmq.queue.name}")
 	    public void consumePriceData(PriceData priceData) {
 	        log.info("Received price data: {}", priceData);
 
@@ -39,6 +39,6 @@ public class PriceDataConsumer {
 
 	        // Persist VWAP in database (optional)
 	       
-	        //vwapCalculator.saveTheCalculatedValues(priceResponse.getPriceDataResponse());
+	        vwapCalculator.saveTheCalculatedValues(priceResponse.getPriceDataResponse());
 	    }
 }

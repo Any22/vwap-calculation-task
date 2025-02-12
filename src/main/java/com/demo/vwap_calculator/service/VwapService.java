@@ -6,6 +6,7 @@ import java.util.Map;
 
 import java.util.stream.Collectors;
 
+import jakarta.inject.Inject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,32 +25,38 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class VwapService {
+	@Inject
+	private PriceDataProducer priceDataProducer;
 
-	private final PriceDataRepository priceDataRepository;
-	private final PriceDataResponseEntityRepository priceDataResponseEntityRepository;
+	@Inject
+	private  PriceDataRepository priceDataRepository;
+
+	@Inject
+	private  PriceDataResponseEntityRepository priceDataResponseEntityRepository;
 
 	public void savedData(PriceData priceData) {
 
-		if (priceDataRepository.existsByCurrencyPairAndHour(priceData.getCurrencyPair(), priceData.getHour())) {
+		priceDataProducer.sendMessage(priceData);
 
-			throw new DuplicateRecordExist("The record aready exist....!!");
-		}
-		
-		PriceDataEntity entity = PriceDataEntity.builder().timeStamp(priceData.getTimeStamp())
-				.currencyPair(priceData.getCurrencyPair()).price(priceData.getPrice()).volume(priceData.getVolume())
-				.hour(priceData.getHour()).build();
+//		if (priceDataRepository.existsByCurrencyPairAndHour(priceData.getCurrencyPair(), priceData.getHour())) {
+//
+//			throw new DuplicateRecordExist("The record already exist....!!");
+//		}
+//
+//		PriceDataEntity entity = PriceDataEntity.builder().timeStamp(priceData.getTimeStamp())
+//				.currencyPair(priceData.getCurrencyPair()).price(priceData.getPrice()).volume(priceData.getVolume())
+//				.hour(priceData.getHour()).build();
 
-		priceDataRepository.save(entity);
 
-		List<PriceData> priceDataList = new ArrayList<>();
-		priceDataList.add(priceData);
 
-		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2);
-
-		this.saveTheCalculatedValues(priceDataResponse.getPriceDataResponse());
+//		List<PriceData> priceDataList = new ArrayList<>();
+//		priceDataList.add(priceData);
+//
+//		PriceResponse priceDataResponse = this.calculateHourlyVwap(priceDataList, 2);
+//
+//		this.saveTheCalculatedValues(priceDataResponse.getPriceDataResponse());
 	}
 	
 	public PriceResponse calculateHourlyVwap(List<PriceData> priceDataList, Integer pageSize) {
@@ -57,14 +64,14 @@ public class VwapService {
 		log.info("The page size inside calculateHourlyVWAP is{}", pageSize);
 
 		Map<String, Map<Integer, List<PriceData>>> groupedData = priceDataList.stream()
-				.collect(Collectors.groupingBy(pd -> pd.getCurrencyPair(), Collectors.groupingBy(PriceData::getHour)));
+				.collect(Collectors.groupingBy(PriceData::getCurrencyPair, Collectors.groupingBy(PriceData::getHour)));
 
 		groupedData.forEach((currencyPair, hourlyData) -> {
 			hourlyData.forEach((hour, dataList) -> {
 
 				double weightedPriceSum = dataList.stream().mapToDouble(pd -> pd.getPrice() * pd.getVolume()).sum();
 
-				int totalVolume = dataList.stream().mapToInt(PriceData::getVolume).sum();
+				double totalVolume = dataList.stream().mapToDouble(PriceData::getVolume).sum();
 
 				double vwapCalculated = weightedPriceSum / totalVolume;
 
@@ -80,7 +87,7 @@ public class VwapService {
 
 	}
 
-	private void saveTheCalculatedValues(List<PriceDataResponse> vwapList) {
+	protected void saveTheCalculatedValues(List<PriceDataResponse> vwapList) {
 
 		for (PriceDataResponse priceData : vwapList) {
 			PriceDataResponseEntity dataResponseEntity = PriceDataResponseEntity.builder()

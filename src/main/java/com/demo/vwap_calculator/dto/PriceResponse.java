@@ -21,7 +21,7 @@ public class PriceResponse {
 	private Integer totalPriceData;
 	private Integer totalPages;
 	private Integer currentPage;
-	@JsonProperty(value="ResposneWithPagination")
+	@JsonProperty(value="ResponseWithPagination")
 	private List<PriceDataResponse> priceDataResponse;
 
 	

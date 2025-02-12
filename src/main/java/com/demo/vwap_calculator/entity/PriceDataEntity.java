@@ -39,7 +39,7 @@ public class PriceDataEntity {
 
 	@Column(name = "volume", nullable = false)
 	private int volume;
-	
+
 	@Column(name = "hour")
 	private int hour;
 }
