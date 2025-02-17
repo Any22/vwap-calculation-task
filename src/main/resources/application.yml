@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
 spring:
   application:
     name: vwap-calculator
@@ -8,6 +8,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+        default-requeue-rejected: false
   datasource:
     host: localhost
     port: 5432
@@ -34,4 +39,8 @@ rabbitmq:
   queue:
     name: price-data-queue
   routing:
-    key: price-data-Docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4.0.5-managementrouting-key
+    key: price-data-routing-key
+
+external:
+  api:
+    endpoint: http://localhost:8081/external-resource/get-data

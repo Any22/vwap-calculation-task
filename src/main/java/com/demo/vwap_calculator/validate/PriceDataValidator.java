@@ -10,30 +10,32 @@ import com.demo.vwap_calculator.dto.PriceData;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PriceDataValidator implements ConstraintValidator<ValidPriceData, String> {
-	private FieldType fieldType;
-	@Override
-	public void initilialize (ValidPriceData constraintAnnotation){
-		this.fieldType = constraintAnnotation
-	}
+import static com.demo.vwap_calculator.validate.FieldType.Currency_Pair;
+import static com.demo.vwap_calculator.validate.FieldType.Time_Stamp;
 
-	@Override
-	public boolean isValid (String value, ConstraintValidatorContext context){
-		if (value==null){
-			return false;
-		}
-		switch(fieldType){
-			case Time_Stamp:
-				return value.matches("^[a-z]+$");
-			case Last_Name:
-				return value.matches("^[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*$");
-			case Password:
-				return value.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$");
-			default:
-				return false;
-		}
-	}
-}
+//public class PriceDataValidator implements ConstraintValidator<ValidPriceData, String> {
+//	@Override
+//	public void initilialize (ValidPriceData constraintAnnotation){
+//		ValidPriceData validPriceData;
+//
+//		this.validPriceData = constraintAnnotation;
+//	}
+
+//	@Override
+//	public boolean isValid (String value, ConstraintValidatorContext context){
+//		if (value==null){
+//			return false;
+//		}
+//		switch(fieldType){
+//			case Time_Stamp:
+//				return value.matches("^[0-9]+[0-9]+//:(AM|PM)$");
+//			case Currency_Pair:
+//				return value.matches("^[A-Z]{3}\\[A-Z]{3}$");
+//			default:
+//				return false;
+//		}
+//	}
+//}
 //	@Override
 //	public void initialize(ValidPriceData constraintAnnotation) {
 //		ConstraintValidator.super.initialize(constraintAnnotation);

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import java.util.stream.Collectors;
 
+import com.demo.vwap_calculator.command.ExternalAPICommands;
+import com.demo.vwap_calculator.repository.ExternalAPICallRepository;
 import jakarta.inject.Inject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ import com.demo.vwap_calculator.repository.PriceDataResponseEntityRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
 @Service
 @Slf4j
@@ -35,6 +38,9 @@ public class VwapService {
 
 	@Inject
 	private  PriceDataResponseEntityRepository priceDataResponseEntityRepository;
+
+	@Inject
+	private ExternalAPICallRepository repository;
 
 	public void savedData(PriceData priceData) {
 
@@ -99,37 +105,38 @@ public class VwapService {
 	}
 
 
-	public PriceResponse getPriceData(PriceDataRequestOptional optionalRequest) {
+//	public PriceResponse getPriceData(PriceDataRequestOptional optionalRequest) {
+//
+//		log.info("Executing getPriceData() with optionalRequest {}", optionalRequest.getPageSize().toString());
+//
+//		List<PriceDataResponse> priceDataList = new ArrayList<>();
+//
+//		Pageable pageable = PageRequest.of(0, optionalRequest.getPageSize());
+//
+//		for (PriceDataResponseEntity price : priceDataResponseEntityRepository.findAll(pageable)) {
+//
+//			priceDataList
+//					.add(new PriceDataResponse(price.getUniqueCurrencyPair(), price.getHourlyData(), price.getVwap()));
+//
+//			log.debug("page from repository containing data {} ", price);
+//		}
+//
+//		log.info("The PriceDataResposne is {}", priceDataList);
+//	Integer pageSize =( optionalRequest.getPageSize()  > priceDataList.size() ) ? priceDataList.size()-1 : optionalRequest.getPageSize()-1;
+//
+//		return PriceResponse.builder().currentPage(pageSize).totalPriceData(priceDataList.size())
+//				.priceDataResponse(priceDataList).build();
+//
+//	}
 
-		log.info("Executing getPriceData() with optionalRequest {}", optionalRequest.getPageSize().toString());
 
-		List<PriceDataResponse> priceDataList = new ArrayList<>();
+	public Flux<PriceData> getPriceData() {
 
-		Pageable pageable = PageRequest.of(0, optionalRequest.getPageSize());
-
-		for (PriceDataResponseEntity price : priceDataResponseEntityRepository.findAll(pageable)) {
-
-			priceDataList
-					.add(new PriceDataResponse(price.getUniqueCurrencyPair(), price.getHourlyData(), price.getVwap()));
-
-			log.debug("page from repository containing data {} ", price);
-		}
-
-		log.info("The PriceDataResposne is {}", priceDataList);
-	Integer pageSize =( optionalRequest.getPageSize()  > priceDataList.size() ) ? priceDataList.size()-1 : optionalRequest.getPageSize()-1;
-
-		return PriceResponse.builder().currentPage(pageSize).totalPriceData(priceDataList.size())
-				.priceDataResponse(priceDataList).build();
+		log.info("Executing getPriceData()");
+         return   repository.getAllDataFromExternalAPI();
 
 	}
 
-	
-//
-//	public PriceDataResponse getPriceDataByHour(String timeInHours) {
-//		
-//		PriceDataEntity priceDataEntity = priceDataRepository.findByHour(timeInHours);
-//		
-//		return null;
-//	}
+
 
 }

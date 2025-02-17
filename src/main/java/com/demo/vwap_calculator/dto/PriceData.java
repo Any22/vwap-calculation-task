@@ -1,11 +1,12 @@
 package com.demo.vwap_calculator.dto;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import com.demo.vwap_calculator.validate.FieldType;
-import com.demo.vwap_calculator.validate.ValidPriceData;
+//import com.demo.vwap_calculator.validate.FieldType;
+//import com.demo.vwap_calculator.validate.ValidPriceData;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.NotNull;
@@ -21,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PriceData {
-	@ValidPriceData(type= FieldType.Time_Stamp)
+public class PriceData implements Serializable {
+//	@ValidPriceData(type= FieldType.Time_Stamp)
 	private String timeStamp;
 	@NotNull(message = "Currency pair cannot be null")
 	private String currencyPair;

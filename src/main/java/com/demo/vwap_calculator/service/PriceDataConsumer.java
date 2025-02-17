@@ -25,7 +25,7 @@ public class PriceDataConsumer {
 
 	    @RabbitListener(queues = "${rabbitmq.queue.name}")
 	    public void consumePriceData(PriceData priceData) {
-	        log.info("Received price data: {}", priceData);
+	        log.info("Received price data for consumption: {}", priceData);
 
 	        String currencyPair = priceData.getCurrencyPair();
 	        int hour = priceData.getHour();

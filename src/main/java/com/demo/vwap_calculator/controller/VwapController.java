@@ -25,7 +25,10 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-// duplication of data is found after making the post request . Need to solve it 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+// duplication of data is found after making the post request . Need to solve it
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -49,57 +52,34 @@ public class VwapController {
 	 *  - Simplicity : Easier to maintain system 
 	 *  Note : for auditing , compliance and data analysis , data can be stored in data base (it will be required)
 	 *  
-	 * @param priceData
+	 *
 	 * @return ResponseEntity of String
 	 ******************************************************************************************************************/
 	
-	@RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, value = "/create-data")
-	public Callable<ResponseEntity<String>> createNewData(@RequestBody @Valid PriceData priceData) {
 
-		long start = System.currentTimeMillis();
-		return new Callable<ResponseEntity<String>>() {
-			@Override
-			public ResponseEntity<String> call() throws Exception {
-				try {
-					vwapService.savedData(priceData);
-					return new ResponseEntity<>(" The data has sent to queue for processing ", HttpStatus.CREATED);
-				} catch (Exception ex) {
-				//	log.error(ex.getMessage());
-					throw ex;
-				}
-
-			}
-
-		};
-
-	}
 	
 
 	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
-	public Callable<ResponseEntity<PriceResponse>> getExistingData(
+	public Mono<ResponseEntity<Flux<PriceData>>> getExistingData(
 			@RequestParam(value = "page_size", required = false) Integer pageSize) throws Exception {
 
 		final long start = System.currentTimeMillis();
-		return new Callable<ResponseEntity<PriceResponse>>() {
-			@Override
-			public ResponseEntity<PriceResponse> call() throws Exception {
-				try {
-					Integer pSize = ((pageSize == null) || pageSize.equals(0)) ? defaultPageSize : pageSize;
-					log.debug("The pagesize is " + pSize);
-					PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
-							.build();
-					PriceResponse priceResponse = vwapService.getPriceData(optionalRequest);
-					long duration = System.currentTimeMillis() - start;
-					log.info("time taken" + duration);
-					return new ResponseEntity<>(priceResponse, HttpStatus.OK);
-				} catch (Exception ex) {
-					log.error(ex.getMessage());
-					throw ex;
-				}
 
-			}
+            try {
+                Integer pSize = ((pageSize == null) || pageSize.equals(0)) ? defaultPageSize : pageSize;
+                log.debug("The pagesize is " + pSize);
+                PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
+                        .build();
+              //  PriceResponse priceResponse = vwapService.getPriceData(optionalRequest);
+				Flux<PriceData> response = vwapService.getPriceData();
+                long duration = System.currentTimeMillis() - start;
+                log.info("time taken" + duration);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } catch (Exception ex) {
+                log.error(ex.getMessage());
+                throw ex;
+            }
 
-		};
 
 	}
 	

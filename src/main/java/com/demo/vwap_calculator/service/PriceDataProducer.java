@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
@@ -28,10 +29,11 @@ public class PriceDataProducer {
 	@Inject
 	private RabbitTemplate rabbitTemplate;
 
-	public void sendMessage(PriceData priceData) {
+	public Mono<Void> sendMessage(PriceData priceData) {
 
 		log.info("message sent {}", priceData.toString());
 		rabbitTemplate.convertAndSend(exchange, routingKey, priceData);
+		return Mono.empty();
 	}
 
 }
