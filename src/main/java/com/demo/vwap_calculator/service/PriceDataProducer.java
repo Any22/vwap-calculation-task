@@ -1,14 +1,11 @@
 package com.demo.vwap_calculator.service;
 
-import com.demo.vwap_calculator.dto.PriceData;
+import com.demo.vwap_calculator.dto.PriceDataList;
 import jakarta.inject.Inject;
-import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -29,11 +26,11 @@ public class PriceDataProducer {
 	@Inject
 	private RabbitTemplate rabbitTemplate;
 
-	public Mono<Void> sendMessage(PriceData priceData) {
+	public void sendMessage(PriceDataList priceData) {
 
 		log.info("message sent {}", priceData.toString());
 		rabbitTemplate.convertAndSend(exchange, routingKey, priceData);
-		return Mono.empty();
+
 	}
 
 }

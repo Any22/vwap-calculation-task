@@ -7,16 +7,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.demo.vwap_calculator.command.ExternalAPICommands;
+import com.demo.vwap_calculator.dto.*;
 import com.demo.vwap_calculator.repository.ExternalAPICallRepository;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.demo.vwap_calculator.dto.PriceData;
-import com.demo.vwap_calculator.dto.PriceDataRequestOptional;
-import com.demo.vwap_calculator.dto.PriceDataResponse;
-import com.demo.vwap_calculator.dto.PriceResponse;
 import com.demo.vwap_calculator.entity.PriceDataEntity;
 import com.demo.vwap_calculator.entity.PriceDataResponseEntity;
 import com.demo.vwap_calculator.exception.DuplicateRecordExist;
@@ -26,12 +24,13 @@ import com.demo.vwap_calculator.repository.PriceDataResponseEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
 public class VwapService {
-	@Inject
-	private PriceDataProducer priceDataProducer;
+//	@Inject
+//	private PriceDataProducer priceDataProducer;
 
 	@Inject
 	private  PriceDataRepository priceDataRepository;
@@ -44,7 +43,7 @@ public class VwapService {
 
 	public void savedData(PriceData priceData) {
 
-		priceDataProducer.sendMessage(priceData);
+//		priceDataProducer.sendMessage(priceData);
 
 //		if (priceDataRepository.existsByCurrencyPairAndHour(priceData.getCurrencyPair(), priceData.getHour())) {
 //
@@ -92,7 +91,7 @@ public class VwapService {
 				.priceDataResponse(vwapList).build();
 
 	}
-
+@Transactional
 	protected void saveTheCalculatedValues(List<PriceDataResponse> vwapList) {
 
 		for (PriceDataResponse priceData : vwapList) {
@@ -130,10 +129,10 @@ public class VwapService {
 //	}
 
 
-	public Flux<PriceData> getPriceData() {
+	public void getPriceData() {
 
-		log.info("Executing getPriceData()");
-         return   repository.getAllDataFromExternalAPI();
+		log.info("Executing getPriceData() from service class");
+		repository.getAllDataFromExternalAPI();
 
 	}
 

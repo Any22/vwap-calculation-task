@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.demo.vwap_calculator.dto.PriceDataList;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -24,21 +25,25 @@ public class PriceDataConsumer {
 	    private final Map<String, List<PriceData>> priceDataMap = new ConcurrentHashMap<>();
 
 	    @RabbitListener(queues = "${rabbitmq.queue.name}")
-	    public void consumePriceData(PriceData priceData) {
+	    public void consumePriceData(PriceDataList priceData) {
 	        log.info("Received price data for consumption: {}", priceData);
 
-	        String currencyPair = priceData.getCurrencyPair();
-	        int hour = priceData.getHour();
+            for (PriceData data: priceData.getPriceDataList()) {
 
-	        priceDataMap.computeIfAbsent(currencyPair + ":" + hour, key -> new ArrayList<>()).add(priceData);
+                String currencyPair = data.getCurrencyPair();
+                int hour = data.getHour();
 
-	        // Calculate VWAP for the current hour
-	        List<PriceData> hourlyData = priceDataMap.get(currencyPair + ":" + hour);
-	        PriceResponse priceResponse = vwapCalculator.calculateHourlyVwap(hourlyData,0);
-	        log.info("VWAP for {} at hour {}: {}", currencyPair, hour, priceResponse);
+                priceDataMap.computeIfAbsent(currencyPair + ":" + hour, key -> new ArrayList<>()).add(data);
 
-	        // Persist VWAP in database (optional)
-	       
-	        vwapCalculator.saveTheCalculatedValues(priceResponse.getPriceDataResponse());
+                // Calculate VWAP for the current hour
+                List<PriceData> hourlyData = priceDataMap.get(currencyPair + ":" + hour);
+
+                PriceResponse priceResponse = vwapCalculator.calculateHourlyVwap(hourlyData, 0);
+                log.info("VWAP for {} at hour {}: {}", currencyPair, hour, priceResponse);
+
+                // Persist VWAP in database (optional)
+                vwapCalculator.saveTheCalculatedValues(priceResponse.getPriceDataResponse());
+            }
+
 	    }
 }

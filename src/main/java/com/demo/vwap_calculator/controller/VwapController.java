@@ -2,6 +2,7 @@ package com.demo.vwap_calculator.controller;
 
 import java.util.concurrent.Callable;
 
+import com.demo.vwap_calculator.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,12 +15,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import com.demo.vwap_calculator.dto.PriceData;
-import com.demo.vwap_calculator.dto.PriceDataRequestOptional;
-import com.demo.vwap_calculator.dto.PriceDataResponse;
-import com.demo.vwap_calculator.dto.PriceResponse;
 import com.demo.vwap_calculator.repository.PriceDataRepository;
-import com.demo.vwap_calculator.service.PriceDataProducer;
+//import com.demo.vwap_calculator.service.PriceDataProducer;
 import com.demo.vwap_calculator.service.VwapService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -37,7 +34,7 @@ public class VwapController {
 
 	private final VwapService vwapService;
 	
-	private final PriceDataProducer priceDataProducer;
+//	private final PriceDataProducer priceDataProducer;
 
 	private static final Integer defaultPageSize = 2;
 	
@@ -60,7 +57,7 @@ public class VwapController {
 	
 
 	@RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE, value = "/get-data")
-	public Mono<ResponseEntity<Flux<PriceData>>> getExistingData(
+	public ResponseEntity<String> getExistingData(
 			@RequestParam(value = "page_size", required = false) Integer pageSize) throws Exception {
 
 		final long start = System.currentTimeMillis();
@@ -71,10 +68,10 @@ public class VwapController {
                 PriceDataRequestOptional optionalRequest = PriceDataRequestOptional.builder().pageSize(pSize)
                         .build();
               //  PriceResponse priceResponse = vwapService.getPriceData(optionalRequest);
-				Flux<PriceData> response = vwapService.getPriceData();
+				vwapService.getPriceData();
                 long duration = System.currentTimeMillis() - start;
                 log.info("time taken" + duration);
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>("created", HttpStatus.OK);
             } catch (Exception ex) {
                 log.error(ex.getMessage());
                 throw ex;

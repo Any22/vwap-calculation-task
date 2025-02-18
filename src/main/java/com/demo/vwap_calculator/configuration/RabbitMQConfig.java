@@ -26,10 +26,9 @@ public class RabbitMQConfig {
 	@Value("${rabbitmq.routing.key}")
 	private String routingJsonKey;
 
-	//spring bean for queue (store JSON messages),durable -> true means it will be persisted after
-	// Rabbit MQ will be restarted
+	//spring bean for queue (store JSON messages),durable -> true means it will be persisted after MQ will be restarted
 	@Bean
-	public Queue queue() {
+	public Queue jqueue() {
 		return new Queue(queue, true, false, false);
 	}
 
@@ -44,7 +43,7 @@ public class RabbitMQConfig {
 	public Binding jsonBinding() {
 
 		return BindingBuilder
-				.bind(queue())
+				.bind(jqueue())
 				.to(exchange())
 				.with(routingJsonKey);
 	}

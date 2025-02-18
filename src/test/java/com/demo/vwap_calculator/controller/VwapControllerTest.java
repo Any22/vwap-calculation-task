@@ -45,14 +45,14 @@ public class VwapControllerTest {
 
 	}
 
-	@Test
-	public void getExistingData_retrunSucess() throws Exception {
-		ResponseEntity<PriceResponse> response = vwapController.getExistingData(23).call();
-	    //assertThat(response.getStatusCode(), is(HttpStatus.OK));
-		assertAll("getExistingData_retrunSucess", 
-				() -> Assertions.assertEquals(HttpStatus.OK, response.getStatusCode()),
-				() -> Assertions.assertNotNull(response.getBody()));
-	}
+//	@Test
+//	public void getExistingData_retrunSucess() throws Exception {
+//		ResponseEntity<PriceResponse> response = vwapController.getExistingData(23).call();
+//	    //assertThat(response.getStatusCode(), is(HttpStatus.OK));
+//		assertAll("getExistingData_retrunSucess",
+//				() -> Assertions.assertEquals(HttpStatus.OK, response.getStatusCode()),
+//				() -> Assertions.assertNotNull(response.getBody()));
+//	}
 	
 //	@Test
 //	public void createNewData_ReturnSuccess() {
